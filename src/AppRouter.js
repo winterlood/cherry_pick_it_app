@@ -14,7 +14,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import HomeScene from '~/scene/HomeScene';
 
 // Commons
-import BottomTabBar from '~/common/organism/BottomTabBar';
+import BottomTabBar from '~/common/molecule/BottomTabBar';
 
 // TESTS
 import Button from '~/common/atom/Button';
@@ -75,7 +75,7 @@ const AppRouter = () => {
   return (
     <NavigationContainer>
       <Tab.Navigator tabBar={(props) => <BottomTabBar {...props} />}>
-        <Tab.Screen name="Home" component={HomeScreen} />
+        <Tab.Screen name="Home" component={HomeScene} />
         <Tab.Screen name="List" component={ListScene} />
         <Tab.Screen name="Settings" component={SettingsScreen} />
       </Tab.Navigator>

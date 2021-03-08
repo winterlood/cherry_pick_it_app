@@ -2,14 +2,17 @@ import React from 'react';
 import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
 import {BlurView} from '@react-native-community/blur';
 
+// STYLE GUIDE
+import {STYLE_COLOR} from '~/util/StyleGuide';
+
 // Icons
 import Icon_Ionicons from 'react-native-vector-icons/Ionicons';
 import Icon_FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 const TabBarIcon = ({route, focused}) => {
   const icon_style_list = [
-    styles.tabBar__icon,
-    focused ? styles.tabBar__icon_on : styles.tabBar__icon_off,
+    styles.tabbar_item__icon,
+    focused ? styles.tabbar_item__icon_on : styles.tabbar_item__icon_off,
   ];
   if (route.name === 'Home') {
     return <Icon_Ionicons name={'home'} style={icon_style_list} />;
@@ -25,41 +28,13 @@ const TabBarIcon = ({route, focused}) => {
 
 const BottomTabBar = ({state, descriptors, navigation}) => {
   return (
-    <View
-      style={{
-        position: 'absolute',
-        height: 50,
-        bottom: 0,
-        left: 0,
-        right: 0,
-        overflow: 'hidden',
-      }}>
+    <View style={styles.tabbar_container}>
       <BlurView
-        style={{
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          height: 50,
-          zIndex: 1,
-        }}
+        style={styles.tabbar_container_blur}
         blurType="xlight"
         blurAmount={5}
         reducedTransparencyFallbackColor="white"></BlurView>
-      <View
-        style={{
-          flexDirection: 'row',
-          backgroundColor: 'rgba(150,150,150,0.1)',
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          height: 50,
-          justifyContent: 'center',
-          alignItems: 'center',
-          zIndex: 5,
-          elevation: 0,
-        }}>
+      <View style={styles.tabbar_container_wrapper}>
         {state.routes.map((route, index) => {
           const {options} = descriptors[route.key];
           //   const label =
@@ -111,14 +86,43 @@ const BottomTabBar = ({state, descriptors, navigation}) => {
   );
 };
 const styles = StyleSheet.create({
-  tabBar__icon: {
+  tabbar_container: {
+    position: 'absolute',
+    height: 50,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    overflow: 'hidden',
+  },
+  tabbar_container_wrapper: {
+    flexDirection: 'row',
+    backgroundColor: 'rgba(100,100,100,0.1)',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 5,
+    elevation: 0,
+  },
+  tabbar_container_blur: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 50,
+    zIndex: 1,
+  },
+  tabbar_item__icon: {
     fontSize: 20,
   },
-  tabBar__icon_on: {
-    color: 'red',
+  tabbar_item__icon_on: {
+    color: STYLE_COLOR.PRIMARY,
   },
-  tabBar__icon_off: {
-    color: 'gray',
+  tabbar_item__icon_off: {
+    color: STYLE_COLOR.DEFAULT,
   },
 });
 

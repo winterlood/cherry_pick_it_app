@@ -1,13 +1,16 @@
 import React, {useState, useEffect} from 'react';
 import {SafeAreaView, View, Text} from 'react-native';
 
+import PageHeader from '~/common/molecule/PageHeader';
+
 const HomeScene = () => {
   useEffect(() => {
     console.log('HOME');
   }, []);
   return (
     <SafeAreaView style={{flex: 1, padding: 20}}>
-      <View
+      <PageHeader title={'LOREM'} />
+      {/* <View
         style={{
           backgroundColor: 'white',
           width: 70,
@@ -15,7 +18,7 @@ const HomeScene = () => {
           elevation: 10,
         }}>
         <Text>DFd</Text>
-      </View>
+      </View> */}
     </SafeAreaView>
   );
 };

@@ -6,7 +6,7 @@ import Icon_FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 export const STYLE_COLOR = {
   // COMMON
-  PRIMARY: 'black',
+  PRIMARY: 'tomato',
   SECONDARY: 'black',
   DEFAULT: 'black',
   BACKGROUND: 'white',
@@ -21,6 +21,8 @@ export const STYLE_TYPHO = StyleSheet.create({
   // PAGE HEADER
   PAGE_HEADER__MAIN: {},
   PAGE_HEADER__SUB: {},
+
+  // TABBAR
 
   // BUTTON
   BUTTON__TEXT: {
