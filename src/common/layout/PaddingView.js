@@ -1,12 +1,15 @@
 import React, {useState, useEffect} from 'react';
-import {View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 
-const PaddingView = () => {
-  return <View></View>;
+const PaddingView = ({children}) => {
+  return <View style={styles.container}>{children}</View>;
 };
 
 const styles = StyleSheet.create({
-  paddingHorizon: 20,
+  container: {
+    paddingTop: 15,
+    paddingHorizontal: 20,
+  },
 });
 
 export default PaddingView;

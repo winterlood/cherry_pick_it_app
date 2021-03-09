@@ -8,7 +8,7 @@ export const STYLE_COLOR = {
   // COMMON
   PRIMARY: 'tomato',
   SECONDARY: 'black',
-  DEFAULT: 'black',
+  DEFAULT: 'rgb(200,200,200)',
   BACKGROUND: 'white',
 
   // BUTTON
@@ -19,8 +19,23 @@ export const STYLE_COLOR = {
 
 export const STYLE_TYPHO = StyleSheet.create({
   // PAGE HEADER
-  PAGE_HEADER__MAIN: {},
-  PAGE_HEADER__SUB: {},
+  PAGE_HEADER__MAIN: {
+    fontFamily: 'AppleL',
+    color: 'black',
+    fontSize: 20,
+  },
+  PAGE_HEADER__SUB: {
+    fontFamily: 'AppleB',
+    color: 'gray',
+    fontSize: 10,
+  },
+
+  // SCETION
+  SECTION_HEADER_MAIN: {
+    fontFamily: 'AppleEB',
+    fontSize: 15,
+    color: 'rgb(50,50,50)',
+  },
 
   // TABBAR
 
