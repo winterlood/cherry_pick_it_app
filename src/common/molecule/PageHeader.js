@@ -9,8 +9,8 @@ import {STYLE_TYPHO} from '~/util/StyleGuide';
 
 const getTypho = (scene) => {
   switch (scene) {
-    case 'Home': {
-      return {title: 'LOREM IS PRUM', sub: 'SUB SCRIPTION'};
+    case 'HOME': {
+      return {title: '체리픽 IT', sub: '체리픽 아이티의 새로운 뉴스'};
     }
     default: {
       return {title: 'Lorem Is Prum', sub: 'SUB SCRIPTION'};

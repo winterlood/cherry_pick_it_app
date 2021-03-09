@@ -22,18 +22,35 @@ export const STYLE_TYPHO = StyleSheet.create({
   PAGE_HEADER__MAIN: {
     fontFamily: 'AppleL',
     color: 'black',
-    fontSize: 20,
+    fontSize: 30,
   },
   PAGE_HEADER__SUB: {
     fontFamily: 'AppleB',
     color: 'gray',
-    fontSize: 10,
+    fontSize: 12,
   },
 
   // SCETION
   SECTION_HEADER_MAIN: {
     fontFamily: 'AppleEB',
+    fontSize: 20,
+    color: 'rgb(50,50,50)',
+  },
+  SECTION_HEADER_SUB: {
+    fontFamily: 'AppleL',
+    fontSize: 12,
+    color: 'rgb(50,50,50)',
+  },
+
+  // MODAL
+  MODAL_HEADER_MAIN: {
+    fontFamily: 'AppleB',
     fontSize: 15,
+    color: 'rgb(50,50,50)',
+  },
+  MODAL_HEADER_SUB: {
+    fontFamily: 'AppleL',
+    fontSize: 12,
     color: 'rgb(50,50,50)',
   },
 
@@ -50,8 +67,13 @@ export const STYLE_TYPHO = StyleSheet.create({
   },
 
   // ITEM
-  ITEM_HEADER__TEXT: {},
-  ITEM_HEADER__SUB: {},
+  ITEM_HEADER__TEXT: {
+    fontFamily: 'AppleEB',
+  },
+  ITEM_HEADER__SUB: {
+    fontFamily: 'AppleL',
+    color: STYLE_COLOR.DEFAULT,
+  },
 
   ITEM_BODY__TEXT: {},
   ITEM_BODY__SUB: {},
@@ -86,6 +108,6 @@ export const STYLE_COMMON = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-    elevation: 5,
+    elevation: 11,
   },
 });

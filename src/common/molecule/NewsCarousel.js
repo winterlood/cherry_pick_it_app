@@ -9,7 +9,7 @@ import {
   Platform,
 } from 'react-native';
 
-import {STYLE_TYPHO} from '~/util/StyleGuide';
+import {STYLE_TYPHO, STYLE_COMMON} from '~/util/StyleGuide';
 
 const ENTRIES1 = [
   {
@@ -50,35 +50,42 @@ const NewsCarousel = (props) => {
 
   useEffect(() => {
     setEntries(ENTRIES1);
+    return () => {
+      setEntries();
+    };
   }, []);
 
   const renderItem = ({item, index}, parallaxProps) => {
     return (
-      <View style={styles.item}>
+      <View style={styles.item} key={index}>
         <ParallaxImage
           source={{uri: item.illustration}}
           containerStyle={styles.imageContainer}
           style={styles.image}
           parallaxFactor={0.4}
           {...parallaxProps}></ParallaxImage>
-        <Text style={styles.item_title__text} numberOfLines={2}>
+        {/* <Text style={styles.item_title__text} numberOfLines={2}>
           {item.title}
-        </Text>
+        </Text> */}
       </View>
     );
   };
 
   return (
     <View style={styles.container}>
-      <Carousel
-        ref={carouselRef}
-        sliderWidth={screenWidth}
-        sliderHeight={screenWidth}
-        itemWidth={screenWidth}
-        data={entries}
-        renderItem={renderItem}
-        hasParallaxImages={true}
-      />
+      {entries ? (
+        <Carousel
+          ref={carouselRef}
+          sliderWidth={screenWidth}
+          sliderHeight={screenWidth}
+          itemWidth={screenWidth}
+          data={entries}
+          renderItem={renderItem}
+          hasParallaxImages={true}
+        />
+      ) : (
+        <></>
+      )}
     </View>
   );
 };
@@ -97,6 +104,7 @@ const styles = StyleSheet.create({
     ...STYLE_TYPHO.SECTION_HEADER_MAIN,
   },
   item: {
+    ...STYLE_COMMON.SHADOW,
     width: screenWidth - 40,
     height: screenWidth - 60,
     height: 200,
