@@ -12,6 +12,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
 // Scenes
 import HomeScene from '~/scene/HomeScene';
+import ListScene from '~/scene/ListScene';
 
 // Commons
 import BottomTabBar from '~/common/molecule/BottomTabBar';
@@ -32,26 +33,6 @@ const RenderedItem = ({item, id}) => {
   );
 };
 
-const HomeScreen = () => {
-  const tmp_list = [];
-  for (var i = 0; i < 1000; i++) {
-    tmp_list.push({id: i.toString()});
-  }
-
-  return (
-    <FlatList
-      data={tmp_list}
-      renderItem={(item) => <RenderedItem id={item.id} item={item} />}
-      keyExtractor={(item) => item.id}></FlatList>
-  );
-};
-function ListScene() {
-  return (
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <Text>List!</Text>
-    </View>
-  );
-}
 function SettingsScreen() {
   return (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>

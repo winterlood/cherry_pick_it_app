@@ -90,7 +90,7 @@ const NewsCarousel = (props) => {
   );
 };
 
-export default NewsCarousel;
+export default React.memo(NewsCarousel);
 
 const styles = StyleSheet.create({
   container: {

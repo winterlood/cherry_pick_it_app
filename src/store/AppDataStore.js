@@ -10,7 +10,7 @@ const DATA_KEY = {
 };
 
 const data_uri =
-  'https://raw.githubusercontent.com/winterlood/cherrypick_it/main/news.json';
+  'https://raw.githubusercontent.com/winterlood/cherrypick_it/main/output.json';
 
 const AppDataProvider = ({children}) => {
   const [state, setState] = useState();
@@ -65,21 +65,32 @@ const AppDataProvider = ({children}) => {
 
   const initApp = async () => {
     console.log('=========================================');
-    const canUpdate = await canUpdateData();
-    if (canUpdate) {
-      console.log('✅  UPDATE IS AVAILABLE');
-      const data = await getServerData();
-      console.log('DATE : ', data.date);
-      console.log('DATA : ', data.data.length);
-      setState({...data});
-      AsyncStorage.setItem(`${DATA_KEY.APPDATA}`, JSON.stringify(data));
-    } else {
-      console.log('🚫  UPDATE NOT NEED');
-      data = await getLocalData();
-      console.log('DATE : ', data.date);
-      console.log('DATA : ', data.data.length);
-      setState({...data});
-      AsyncStorage.setItem(`${DATA_KEY.APPDATA}`, JSON.stringify(data));
+    try {
+      const canUpdate = await canUpdateData();
+      if (canUpdate) {
+        console.log('✅  UPDATE IS AVAILABLE');
+        const data = await getServerData();
+        console.log('DATE : ', data.date);
+        console.log('TOTAL COUNT : ', data.count_total);
+        console.log('NEWS COUNT  : ', data.count_news);
+        console.log('COLUMNS COUNT  : ', data.count_column);
+
+        setState({...data});
+        AsyncStorage.setItem(`${DATA_KEY.APPDATA}`, JSON.stringify(data));
+      } else {
+        console.log('🚫  UPDATE NOT NEED');
+        data = await getLocalData();
+        console.log('DATE : ', data.date);
+        console.log('TOTAL COUNT : ', data.count_total);
+        console.log('NEWS COUNT  : ', data.count_news);
+        console.log('COLUMNS COUNT  : ', data.count_column);
+
+        setState({...data});
+        AsyncStorage.setItem(`${DATA_KEY.APPDATA}`, JSON.stringify(data));
+      }
+    } catch (e) {
+      console.log(e);
+      AsyncStorage.removeItem(`${DATA_KEY.APPDATA}`);
     }
   };
 

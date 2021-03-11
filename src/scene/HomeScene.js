@@ -22,10 +22,12 @@ import PaddingView from '~/common/layout/PaddingView';
 import PageHeader from '~/common/molecule/PageHeader';
 import NewsCarousel from '~/common/molecule/NewsCarousel';
 import NewsItem from '~/common/molecule/NewsItem';
+import ItemModal from '~/common/molecule/ItemModal';
 
-const HomeList = React.memo(({toggleModal}) => {
+const HomeList = React.memo(({toggleModal, navigation}) => {
   const {state} = useContext(AppDataContext);
   useEffect(() => {
+    console.log(navigation);
     console.log('RENDER!@');
   }, []);
   return (
@@ -49,7 +51,6 @@ const HomeList = React.memo(({toggleModal}) => {
                   </View>
                 </PaddingView>
                 <NewsCarousel />
-
                 <PaddingView>
                   <View style={styles.section__header}>
                     <Text style={styles.scetion__header_main}>News</Text>
@@ -60,7 +61,7 @@ const HomeList = React.memo(({toggleModal}) => {
                 </PaddingView>
               </>
             )}
-            data={state?.data}
+            data={state?.data_news}
             renderItem={({item}) => (
               <NewsItem item={item} toggleModal={toggleModal} />
             )}
@@ -74,8 +75,7 @@ const HomeList = React.memo(({toggleModal}) => {
   );
 });
 
-const HomeScene = () => {
-  const {_, width} = Dimensions.get('window');
+const HomeScene = ({navigation}) => {
   const [modalState, setModalState] = useState({
     isVisible: false,
     targetData: undefined,
@@ -95,7 +95,7 @@ const HomeScene = () => {
   };
   return (
     <>
-      <HomeList toggleModal={toggleModal} />
+      <HomeList toggleModal={toggleModal} navigation={navigation} />
       {modalState.isVisible ? (
         <BlurView
           style={styles.blur_container}
@@ -105,77 +105,12 @@ const HomeScene = () => {
       ) : (
         <></>
       )}
-      <Modal isVisible={modalState?.isVisible}>
-        <TouchableOpacity
-          onPress={() => toggleModal()}
-          style={styles.modal_container}>
-          <TouchableOpacity
-            activeOpacity={1}
-            style={styles.modal_container__inner}>
-            <View style={styles.modal_header}>
-              <Text style={styles.modal_header__main}>
-                {modalState?.targetData?.headline}
-              </Text>
-              <Text style={styles.modal_header__sub}>
-                {modalState?.targetData?.source}
-              </Text>
-            </View>
-            <View style={styles.modal_imagebox_mask}>
-              <ImageBackground
-                resizeMode="contain"
-                style={{
-                  width: width - 50,
-                  height: 200,
-                  backgroundColor: 'black',
-                  overflow: 'hidden',
-                }}
-                source={{
-                  uri: modalState?.targetData?.thumbnail_url,
-                }}></ImageBackground>
-            </View>
-
-            <TouchableOpacity onPress={() => toggleModal()}>
-              <Text>{modalState?.targetData?.headline}</Text>
-            </TouchableOpacity>
-          </TouchableOpacity>
-        </TouchableOpacity>
-      </Modal>
+      <ItemModal modalState={modalState} toggleModal={toggleModal} />
     </>
   );
 };
 
 const styles = StyleSheet.create({
-  blur_container: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    bottom: 0,
-    right: 0,
-    zIndex: 10,
-  },
-  modal_container: {flex: 1, alignItems: 'center', justifyContent: 'center'},
-  modal_container__inner: {
-    backgroundColor: 'white',
-    borderRadius: 10,
-    paddingVertical: 10,
-  },
-  modal_header: {
-    paddingHorizontal: 10,
-    marginBottom: 10,
-  },
-  modal_header__main: {
-    ...STYLE_TYPHO.MODAL_HEADER_MAIN,
-  },
-  modal_header__sub: {
-    ...STYLE_TYPHO.MODAL_HEADER_SUB,
-  },
-  modal_imagebox_mask: {
-    height: 200,
-    overflow: 'hidden',
-    backgroundColor: 'rgb(0,0,0)',
-    borderColor: 'red',
-    borderWidth: 1,
-  },
   home_list: {
     paddingBottom: 50,
   },

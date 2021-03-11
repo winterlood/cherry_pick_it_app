@@ -10,7 +10,44 @@ import {
   TouchableNativeFeedback,
 } from 'react-native';
 
+// COMMONS
+import ImageWithError from '~/common/atom/ImageWithError';
+
+// UTILS
+import {
+  NEWS_SOURCE_SPINNER,
+  NEWS_DEFAULT_IMAGE,
+} from '~/util/NewsComponentResolver';
 import {STYLE_COLOR, STYLE_TYPHO, STYLE_COMMON} from '~/util/StyleGuide';
+
+const NewsThumbnailView = ({item}) => {
+  return (
+    <View>
+      <ImageWithError
+        success={
+          item.thumbnail_url
+            ? {uri: item.thumbnail_url}
+            : NEWS_DEFAULT_IMAGE(item.source)
+        }
+        fail={NEWS_DEFAULT_IMAGE(item.source)}
+        style={styles.item_thumbnail}
+      />
+    </View>
+  );
+};
+
+const NewsBodyView = ({item}) => {
+  return (
+    <View style={styles.item_body}>
+      <Text style={styles.item_body__headline}>
+        {item.headline.replace(/\n/g, '')}
+      </Text>
+      <Text style={styles.item_body__source}>
+        {NEWS_SOURCE_SPINNER(item.source)}
+      </Text>
+    </View>
+  );
+};
 
 const NewsItem = ({item, toggleModal}) => {
   return (
@@ -19,41 +56,13 @@ const NewsItem = ({item, toggleModal}) => {
       style={styles.container}>
       {Math.floor(Math.random() * 10) % 2 === 0 ? (
         <>
-          {item.thumbnail_url ? (
-            <View>
-              <Image
-                source={{uri: item.thumbnail_url}}
-                style={styles.item_thumbnail}
-              />
-            </View>
-          ) : (
-            <></>
-          )}
-          <View style={styles.item_body}>
-            <Text style={styles.item_body__headline}>
-              {item.headline.replace(/\n/g, '')}
-            </Text>
-            <Text style={styles.item_body__source}>{item.source}</Text>
-          </View>
+          <NewsThumbnailView item={item} />
+          <NewsBodyView item={item} />
         </>
       ) : (
         <>
-          <View style={styles.item_body}>
-            <Text style={styles.item_body__headline}>
-              {item.headline.replace(/\n/g, '')}
-            </Text>
-            <Text style={styles.item_body__source}>{item.source}</Text>
-          </View>
-          {item.thumbnail_url ? (
-            <View>
-              <Image
-                source={{uri: item.thumbnail_url}}
-                style={styles.item_thumbnail}
-              />
-            </View>
-          ) : (
-            <></>
-          )}
+          <NewsBodyView item={item} />
+          <NewsThumbnailView item={item} />
         </>
       )}
     </TouchableOpacity>
