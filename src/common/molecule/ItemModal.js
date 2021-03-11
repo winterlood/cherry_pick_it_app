@@ -7,6 +7,7 @@ import {
   Text,
   TouchableOpacity,
   Linking,
+  Vibration,
 } from 'react-native';
 import {BlurView} from '@react-native-community/blur';
 import Modal from 'react-native-modal';
@@ -62,9 +63,11 @@ const ItemModal = ({modalState, toggleModal}) => {
             </Text>
           </View>
 
-          {/* <TouchableOpacity onPress={() => toggleModal()}>
+          <TouchableOpacity
+            onLongPress={() => Vibration.vibrate()}
+            onPress={() => toggleModal()}>
             <Text>{modalState?.targetData?.headline}</Text>
-          </TouchableOpacity> */}
+          </TouchableOpacity>
         </TouchableOpacity>
       </TouchableOpacity>
     </Modal>
