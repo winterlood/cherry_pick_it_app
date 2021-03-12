@@ -14,6 +14,8 @@ export const NEWS_SOURCE_SPINNER = (source) => {
       return 'inews24';
     case 'https://velog.io/':
       return 'velog';
+    case 'https://it.donga.com':
+      return 'IT 동아';
     default:
       return '알수없음';
   }
@@ -33,6 +35,8 @@ export const NEWS_DEFAULT_IMAGE = (source) => {
       return NEWS_SOURCE_IMGS.IMG_INEWS24;
     case 'https://velog.io/':
       return NEWS_SOURCE_IMGS.IMG_VELOG;
+    case 'https://it.donga.com':
+      return NEWS_SOURCE_IMGS.IMG_ITDONGA;
     default:
       return {
         uri:

@@ -16,16 +16,41 @@ import Modal from 'react-native-modal';
 import ImageWithError from '~/common/atom/ImageWithError';
 
 // STYLE GUIDE
-import {STYLE_TYPHO} from '~/util/StyleGuide';
+import {STYLE_COLOR, STYLE_TYPHO} from '~/util/StyleGuide';
 
 // UTILS
 import {
   NEWS_SOURCE_SPINNER,
   NEWS_DEFAULT_IMAGE,
 } from '~/util/NewsComponentResolver';
+
+// ICONS
+import Icon_FontAwesome from 'react-native-vector-icons/FontAwesome';
+
+const ItemBookMarkButton = ({modalState}) => {
+  const [isBookMarked, setIsBookMarked] = useState(false);
+  const toggleBookMark = () => setIsBookMarked(!isBookMarked);
+  return (
+    <TouchableOpacity
+      onPress={() => toggleBookMark()}
+      style={styles.bookmark_btn}>
+      {isBookMarked ? (
+        <Icon_FontAwesome
+          style={[styles.bookmark_btn__icon, styles.bookmark_btn__icon_on]}
+          name="bookmark"
+        />
+      ) : (
+        <Icon_FontAwesome
+          style={[styles.bookmark_btn__icon, styles.bookmark_btn__icon_off]}
+          name="bookmark-o"
+        />
+      )}
+    </TouchableOpacity>
+  );
+};
+
 const ItemModal = ({modalState, toggleModal}) => {
   const {_, width} = Dimensions.get('window');
-
   return (
     <Modal isVisible={modalState?.isVisible}>
       <TouchableOpacity
@@ -55,19 +80,34 @@ const ItemModal = ({modalState, toggleModal}) => {
               )}></ImageWithError>
           </View>
           <View style={styles.modal_header}>
-            <Text style={styles.modal_header__main}>
-              {modalState?.targetData?.headline}
-            </Text>
-            <Text style={styles.modal_header__sub}>
-              {NEWS_SOURCE_SPINNER(modalState?.targetData?.source)}
-            </Text>
+            <View style={styles.modal_header_left}>
+              <Text style={styles.modal_header__main}>
+                {modalState?.targetData?.headline.replace(/\n/g, '')}
+              </Text>
+              <Text style={styles.modal_header__sub}>
+                {NEWS_SOURCE_SPINNER(modalState?.targetData?.source)}
+              </Text>
+            </View>
+            <View style={styles.modal_header_right}>
+              <ItemBookMarkButton modalState={modalState} />
+            </View>
           </View>
-
-          <TouchableOpacity
-            onLongPress={() => Vibration.vibrate()}
-            onPress={() => toggleModal()}>
-            <Text>{modalState?.targetData?.headline}</Text>
-          </TouchableOpacity>
+          <View style={styles.modal_footer}>
+            <TouchableOpacity
+              onPress={() => Linking.openURL(modalState?.targetData?.url)}
+              style={[styles.btn_common, styles.btn_positive]}>
+              <Text style={[styles.btn_text, styles.btn_text_positive]}>
+                뉴스 읽으러 가기
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => toggleModal()}
+              style={[styles.btn_common, styles.btn_negative]}>
+              <Text style={[styles.btn_text, styles.btn_text_negative]}>
+                취소
+              </Text>
+            </TouchableOpacity>
+          </View>
         </TouchableOpacity>
       </TouchableOpacity>
     </Modal>
@@ -91,19 +131,67 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   modal_top_img: {
-    marginBottom: 10,
     marginTop: -10,
     width: '100%',
     backgroundColor: 'black',
   },
   modal_header: {
-    paddingHorizontal: 10,
+    paddingHorizontal: 15,
+    paddingVertical: 5,
+    flexDirection: 'row',
+    marginBottom: 10,
+  },
+  modal_header_left: {
+    flex: 1,
+  },
+  modal_header_right: {
+    marginLeft: 10,
+    // paddingHorizontal: 20,
   },
   modal_header__main: {
     ...STYLE_TYPHO.MODAL_HEADER_MAIN,
   },
   modal_header__sub: {
     ...STYLE_TYPHO.MODAL_HEADER_SUB,
+  },
+  bookmark_btn: {
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+  bookmark_btn__icon: {
+    fontSize: 30,
+  },
+  bookmark_btn__icon_on: {
+    color: STYLE_COLOR.PRIMARY,
+  },
+  bookmark_btn__icon_off: {
+    color: STYLE_COLOR.DEFAULT,
+  },
+  modal_footer: {
+    paddingHorizontal: 10,
+  },
+
+  btn_common: {
+    justifyContent: 'center',
+    paddingVertical: 10,
+    borderRadius: 10,
+    marginTop: 15,
+  },
+  btn_positive: {
+    backgroundColor: STYLE_COLOR.PRIMARY,
+  },
+  btn_negative: {
+    backgroundColor: STYLE_COLOR.DEFAULT,
+  },
+  btn_text: {
+    textAlign: 'center',
+    ...STYLE_TYPHO.BUTTON__TEXT,
+  },
+  btn_text_positive: {
+    color: 'white',
+  },
+  btn_text_negative: {
+    color: 'black',
   },
 });
 

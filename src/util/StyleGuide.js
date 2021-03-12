@@ -45,12 +45,12 @@ export const STYLE_TYPHO = StyleSheet.create({
   // MODAL
   MODAL_HEADER_MAIN: {
     fontFamily: 'AppleB',
-    fontSize: 15,
+    fontSize: 18,
     color: 'rgb(50,50,50)',
   },
   MODAL_HEADER_SUB: {
     fontFamily: 'AppleL',
-    fontSize: 12,
+    fontSize: 15,
     color: 'rgb(50,50,50)',
   },
 
@@ -58,12 +58,12 @@ export const STYLE_TYPHO = StyleSheet.create({
 
   // BUTTON
   BUTTON__TEXT: {
-    fontSize: 20,
-    color: 'red',
+    fontSize: 12,
+    fontFamily: 'AppleB',
   },
   BUTTON__ICON: {
-    fontSize: 20,
-    color: 'red',
+    fontSize: 12,
+    fontFamily: 'AppleL',
   },
 
   // ITEM
