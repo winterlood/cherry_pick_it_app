@@ -21,7 +21,7 @@ const TabBarIcon = ({route, focused}) => {
     return <Icon_FontAwesome name={'feed'} style={icon_style_list} />;
   }
   if (route.name === 'Settings') {
-    return <Icon_Ionicons name={'ios-settings'} style={icon_style_list} />;
+    return <Icon_FontAwesome name={'bookmark'} style={icon_style_list} />;
   }
   return <Text>?</Text>;
 };

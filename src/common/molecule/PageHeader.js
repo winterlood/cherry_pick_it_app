@@ -12,6 +12,8 @@ const getTypho = (scene) => {
     case 'HOME': {
       return {title: '체리픽 IT', sub: '체리픽 아이티의 새로운 뉴스'};
     }
+    case 'BOOKMARK':
+      return {title: '북마크', sub: '북마크된 뉴스 / 칼럼'};
     default: {
       return {title: 'Lorem Is Prum', sub: 'SUB SCRIPTION'};
     }
@@ -26,7 +28,6 @@ const PageHeader = ({scene}) => {
         <Text style={styles.title__text}>{TYPHO.title}</Text>
         <Text style={styles.title__sub}>{TYPHO.sub}</Text>
       </View>
-      <Bar />
     </View>
   );
 };

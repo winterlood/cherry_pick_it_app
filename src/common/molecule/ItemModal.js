@@ -1,19 +1,20 @@
-import React, {useState, useEffect} from 'react';
+import React, {useContext} from 'react';
 import {
   Dimensions,
   StyleSheet,
-  ImageBackground,
   View,
   Text,
   TouchableOpacity,
   Linking,
-  Vibration,
 } from 'react-native';
-import {BlurView} from '@react-native-community/blur';
 import Modal from 'react-native-modal';
+
+// STORE
+import {AppDataContext} from '~/store/AppDataStore';
 
 // COMMON
 import ImageWithError from '~/common/atom/ImageWithError';
+import ItemBookmarkTag from '~/common/atom/ItemBookmarkTag';
 
 // STYLE GUIDE
 import {STYLE_COLOR, STYLE_TYPHO} from '~/util/StyleGuide';
@@ -24,28 +25,21 @@ import {
   NEWS_DEFAULT_IMAGE,
 } from '~/util/NewsComponentResolver';
 
-// ICONS
-import Icon_FontAwesome from 'react-native-vector-icons/FontAwesome';
-
 const ItemBookMarkButton = ({modalState}) => {
-  const [isBookMarked, setIsBookMarked] = useState(false);
-  const toggleBookMark = () => setIsBookMarked(!isBookMarked);
+  const {itemAction} = useContext(AppDataContext);
+  const toggleBookmark = () => {
+    itemAction(
+      'BOOKMARK',
+      modalState?.targetData,
+      modalState?.targetData?.url,
+      modalState?.targetData?.type,
+    );
+  };
   return (
-    <TouchableOpacity
-      onPress={() => toggleBookMark()}
-      style={styles.bookmark_btn}>
-      {isBookMarked ? (
-        <Icon_FontAwesome
-          style={[styles.bookmark_btn__icon, styles.bookmark_btn__icon_on]}
-          name="bookmark"
-        />
-      ) : (
-        <Icon_FontAwesome
-          style={[styles.bookmark_btn__icon, styles.bookmark_btn__icon_off]}
-          name="bookmark-o"
-        />
-      )}
-    </TouchableOpacity>
+    <ItemBookmarkTag
+      bookmark={modalState?.targetData?.bookmark}
+      toggleBookmark={toggleBookmark}
+    />
   );
 };
 
@@ -75,9 +69,8 @@ const ItemModal = ({modalState, toggleModal}) => {
                     }
                   : NEWS_DEFAULT_IMAGE(modalState?.targetData?.source)
               }
-              fail={NEWS_DEFAULT_IMAGE(
-                modalState?.targetData?.source,
-              )}></ImageWithError>
+              fail={NEWS_DEFAULT_IMAGE(modalState?.targetData?.source)}
+            />
           </View>
           <View style={styles.modal_header}>
             <View style={styles.modal_header_left}>
@@ -97,7 +90,9 @@ const ItemModal = ({modalState, toggleModal}) => {
               onPress={() => Linking.openURL(modalState?.targetData?.url)}
               style={[styles.btn_common, styles.btn_positive]}>
               <Text style={[styles.btn_text, styles.btn_text_positive]}>
-                뉴스 읽으러 가기
+                {modalState?.targetData?.type === 'TYPE_NEWS'
+                  ? '뉴스 읽으러 가기'
+                  : '칼럼 읽으러 가기'}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -146,7 +141,6 @@ const styles = StyleSheet.create({
   },
   modal_header_right: {
     marginLeft: 10,
-    // paddingHorizontal: 20,
   },
   modal_header__main: {
     ...STYLE_TYPHO.MODAL_HEADER_MAIN,

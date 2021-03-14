@@ -1,5 +1,11 @@
-import React, {useState, useEffect, useContext} from 'react';
-import {SafeAreaView, StyleSheet, View, FlatList} from 'react-native';
+import React, {useState, useContext, useCallback} from 'react';
+import {StyleSheet, FlatList, SafeAreaView, View} from 'react-native';
+
+import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
+
+// COMMON
+import PaddingView from '~/common/layout/PaddingView';
+import PageHeader from '~/common/molecule/PageHeader';
 
 // STORES
 import {AppDataContext} from '~/store/AppDataStore';
@@ -8,12 +14,14 @@ import {AppDataContext} from '~/store/AppDataStore';
 import NewsItem from '~/common/molecule/NewsItem';
 import ItemModal from '~/common/molecule/ItemModal';
 
-import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
-import {useCallback} from 'react';
-const Tab = createMaterialTopTabNavigator();
+// STYLE GUIDE
+import {STYLE_TYPHO} from '~/util/StyleGuide';
 
+const Tab = createMaterialTopTabNavigator();
 const ItemList = ({type}) => {
-  const {state} = useContext(AppDataContext);
+  const {state, getBookmarkedNewsData, getBookmarkedColumnData} = useContext(
+    AppDataContext,
+  );
   const [modalState, setModalState] = useState({
     isVisible: false,
     targetData: undefined,
@@ -40,8 +48,8 @@ const ItemList = ({type}) => {
         data={
           state
             ? type === 'NEWS'
-              ? state.data_news
-              : state.data_column
+              ? getBookmarkedNewsData()
+              : getBookmarkedColumnData()
             : undefined
         }
         renderItem={({item}) => (
@@ -60,23 +68,21 @@ const NewsScene = () => {
 function ColumnScene() {
   return <ItemList type={'COLUMN'} />;
 }
-const ListScene = () => {
+const BookmarkScene = () => {
   return (
     <SafeAreaView style={{flex: 1}}>
+      <PaddingView>
+        <PageHeader scene={'BOOKMARK'} />
+      </PaddingView>
       <Tab.Navigator
         tabBarOptions={{
           style: {
             height: 45,
             paddingHorizontal: '10%',
-            backgroundColor: 'rgb(240,240,240)',
-            borderBottomWidth: 1,
-            borderBottomColor: 'rgb(230,230,230)',
-            elevation: 0,
-            marginHorizontal: 20,
+            backgroundColor: 'rgb(235,235,235)',
+            elevation: 10,
           },
           indicatorStyle: {
-            borderBottomWidth: 0,
-            borderColor: 'white',
             backgroundColor: 'white',
             height: 0,
           },
@@ -94,6 +100,4 @@ const ListScene = () => {
   );
 };
 
-const styles = StyleSheet.create({});
-
-export default ListScene;
+export default BookmarkScene;

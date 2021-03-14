@@ -1,17 +1,9 @@
-import React, {useState, useEffect} from 'react';
-import {
-  StyleSheet,
-  View,
-  Text,
-  StatusBar,
-  TouchableOpacity,
-  ImageBackground,
-  Image,
-  TouchableNativeFeedback,
-} from 'react-native';
+import React from 'react';
+import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
 
 // COMMONS
-import ImageWithError from '~/common/atom/ImageWithError';
+import ImageBackgroundWithError from '~/common/atom/ImageBackgroundWithError';
+import ItemTag from '~/common/atom/ItemTag';
 
 // UTILS
 import {
@@ -20,26 +12,43 @@ import {
 } from '~/util/NewsComponentResolver';
 import {STYLE_COLOR, STYLE_TYPHO, STYLE_COMMON} from '~/util/StyleGuide';
 
-const NewsThumbnailView = ({item}) => {
+// ICONS
+import Icon_FontAwesome from 'react-native-vector-icons/FontAwesome';
+
+const BookmarkFlag = ({isBookmarked}) => {
   return (
     <View>
-      <ImageWithError
-        success={
-          item.thumbnail_url
-            ? {uri: item.thumbnail_url}
-            : NEWS_DEFAULT_IMAGE(item.source)
-        }
-        fail={NEWS_DEFAULT_IMAGE(item.source)}
-        style={styles.item_thumbnail}
-      />
+      {isBookmarked ? (
+        <Icon_FontAwesome style={[styles.bookmark_btn__icon]} name="bookmark" />
+      ) : (
+        <></>
+      )}
     </View>
+  );
+};
+
+const NewsThumbnailView = ({item}) => {
+  return (
+    <ImageBackgroundWithError
+      success={
+        item.thumbnail_url
+          ? {uri: item.thumbnail_url}
+          : NEWS_DEFAULT_IMAGE(item.source)
+      }
+      fail={NEWS_DEFAULT_IMAGE(item.source)}
+      style={styles.item_thumbnail}
+    />
   );
 };
 
 const NewsBodyView = ({item}) => {
   return (
     <View style={styles.item_body}>
-      <Text style={styles.item_body__headline}>
+      <ItemTag type={item.type} />
+      <Text
+        numberOfLines={2}
+        ellipsizeMode="tail"
+        style={styles.item_body__headline}>
         {item.headline.replace(/\n/g, '')}
       </Text>
       <Text style={styles.item_body__source}>
@@ -54,22 +63,15 @@ const NewsItem = ({item, toggleModal}) => {
     <TouchableOpacity
       onPress={() => toggleModal(item)}
       style={styles.container}>
-      {Math.floor(Math.random() * 10) % 2 === 0 ? (
-        <>
-          <NewsThumbnailView item={item} />
-          <NewsBodyView item={item} />
-        </>
-      ) : (
-        <>
-          <NewsBodyView item={item} />
-          <NewsThumbnailView item={item} />
-        </>
-      )}
+      <NewsThumbnailView item={item} />
+
+      <NewsBodyView item={item} />
+      <BookmarkFlag isBookmarked={item.bookmark} />
     </TouchableOpacity>
   );
 };
 function arePropsEqual(prevProps, nextProps) {
-  return nextProps.item.headline === prevProps.item.headline;
+  return nextProps.item.bookmark === prevProps.item.bookmark;
 }
 
 const styles = StyleSheet.create({
@@ -77,6 +79,7 @@ const styles = StyleSheet.create({
     ...STYLE_COMMON.SHADOW,
 
     flexDirection: 'row',
+    justifyContent: 'space-between',
     marginTop: 10,
     marginBottom: 20,
     marginHorizontal: 20,
@@ -84,15 +87,16 @@ const styles = StyleSheet.create({
     borderRadius: 5,
 
     backgroundColor: 'white',
-    height: 100,
+    minHeight: 100,
     overflow: 'hidden',
   },
   item_thumbnail: {
     marginLeft: -5,
-    marginRight: -5,
-    flex: 1,
     width: 120,
     height: 100,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'flex-start',
   },
   item_body: {
     flex: 1,
@@ -100,11 +104,30 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 10,
   },
+  item_body__tag_box: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: 5,
+    borderRadius: 5,
+  },
+  item_body__tag_box_news: {
+    backgroundColor: STYLE_COLOR.SECONDARY,
+  },
+  item_body__tag_box_column: {
+    backgroundColor: STYLE_COLOR.THIRD,
+  },
+  item_body__tag_text: {
+    ...STYLE_TYPHO.ITEM_HEADER__TAG,
+  },
   item_body__headline: {
     ...STYLE_TYPHO.ITEM_HEADER__TEXT,
   },
   item_body__source: {
     ...STYLE_TYPHO.ITEM_HEADER__SUB,
+  },
+  bookmark_btn__icon: {
+    color: STYLE_COLOR.PRIMARY,
+    fontSize: 25,
+    marginTop: -2,
   },
 });
 
