@@ -10,6 +10,9 @@ import ItemModal from '~/common/molecule/ItemModal';
 
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import {useCallback} from 'react';
+
+import NativeAd from '~/common/ads/NativeAd';
+
 const Tab = createMaterialTopTabNavigator();
 
 const ItemList = ({type}) => {
@@ -36,6 +39,7 @@ const ItemList = ({type}) => {
   return (
     <>
       <ItemModal modalState={modalState} toggleModal={toggleModal} />
+
       <FlatList
         data={
           state

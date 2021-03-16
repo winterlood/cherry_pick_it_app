@@ -15,6 +15,9 @@ import {STYLE_COLOR, STYLE_TYPHO, STYLE_COMMON} from '~/util/StyleGuide';
 // ICONS
 import Icon_FontAwesome from 'react-native-vector-icons/FontAwesome';
 
+// AD
+import NativeAd from '~/common/ads/NativeAd';
+
 const BookmarkFlag = ({isBookmarked}) => {
   return (
     <View>
@@ -58,17 +61,21 @@ const NewsBodyView = ({item}) => {
   );
 };
 
-const NewsItem = ({item, toggleModal}) => {
-  return (
-    <TouchableOpacity
-      onPress={() => toggleModal(item)}
-      style={styles.container}>
-      <NewsThumbnailView item={item} />
+const NewsItem = ({item, toggleModal, type}) => {
+  if (item.type === 'AD') {
+    return <NativeAd />;
+  } else {
+    return (
+      <TouchableOpacity
+        onPress={() => toggleModal(item)}
+        style={styles.container}>
+        <NewsThumbnailView item={item} />
 
-      <NewsBodyView item={item} />
-      <BookmarkFlag isBookmarked={item.bookmark} />
-    </TouchableOpacity>
-  );
+        <NewsBodyView item={item} />
+        <BookmarkFlag isBookmarked={item.bookmark} />
+      </TouchableOpacity>
+    );
+  }
 };
 function arePropsEqual(prevProps, nextProps) {
   return nextProps.item.bookmark === prevProps.item.bookmark;

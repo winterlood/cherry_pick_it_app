@@ -1,4 +1,10 @@
-import React, {useState, useContext, useCallback} from 'react';
+import React, {
+  useState,
+  useEffect,
+  useContext,
+  useCallback,
+  useRef,
+} from 'react';
 import {
   StyleSheet,
   TouchableOpacity,
@@ -29,6 +35,7 @@ import Icon_Foundation from 'react-native-vector-icons/Foundation';
 
 const HomeCarousel = ({toggleModal}) => {
   const {state, getCarouselData} = useContext(AppDataContext);
+
   return (
     <>
       <PaddingView>

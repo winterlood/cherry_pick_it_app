@@ -6,7 +6,7 @@ import 'moment/locale/ko';
 import {useCallback} from 'react';
 
 const moment = require('moment');
-moment.lang('ko');
+moment.locale('ko');
 
 const AppDataContext = React.createContext(null);
 
@@ -109,6 +109,36 @@ const AppDataProvider = ({children}) => {
     ).fromNow();
   };
 
+  const insertRandomAd = (data) => {
+    var data_clone = data?.slice();
+    var min = Math.ceil(3);
+    var max = Math.floor(7);
+    var random_ad_count = Math.floor(Math.random() * (max - min)) + min;
+
+    for (var i = 0; i < random_ad_count; i++) {
+      var data_length = data_clone.length;
+
+      var cur_min = Math.ceil(0);
+      var cur_max = Math.floor(data_length);
+      var cur_random_idx =
+        Math.floor(Math.random() * (cur_max - cur_min)) + cur_min;
+
+      var prev_elm =
+        prev_elm !== 0 ? data_clone[cur_random_idx - 1] : {type: 'NONE'};
+      var next_elm =
+        prev_elm !== data_length
+          ? data_clone[cur_random_idx + 1]
+          : {type: 'NONE'};
+
+      if (prev_elm.type === 'AD' || next_elm.type === 'AD') {
+        i -= 1;
+      } else {
+        data_clone.splice(cur_random_idx, 0, {site: `AD_${i}`, type: 'AD'});
+      }
+    }
+    return data_clone;
+  };
+
   const initApp = async () => {
     console.log('=========================================');
     try {
@@ -123,16 +153,28 @@ const AppDataProvider = ({children}) => {
 
         const res_data_news = await checkIsBookmark(data.data_news);
         const res_data_column = await checkIsBookmark(data.data_column);
-
         var last_update_time = getKoreanUpdateTime(data.date);
-        const res_data = {
+
+        const storage_data = {
           ...data,
           data_news: res_data_news,
           data_column: res_data_column,
           last_update_time: last_update_time,
         };
+        AsyncStorage.setItem(
+          `${DATA_KEY.APPDATA}`,
+          JSON.stringify(storage_data),
+        );
+
+        const include_ad_news = insertRandomAd(res_data_news);
+        const include_ad_column = insertRandomAd(res_data_column);
+        const res_data = {
+          ...data,
+          data_news: include_ad_news,
+          data_column: include_ad_column,
+          last_update_time: last_update_time,
+        };
         setState(res_data);
-        AsyncStorage.setItem(`${DATA_KEY.APPDATA}`, JSON.stringify(res_data));
       } else {
         console.log('🚫  UPDATE NOT NEED');
         const data = await getLocalData();
@@ -143,17 +185,28 @@ const AppDataProvider = ({children}) => {
 
         const res_data_news = await checkIsBookmark(data.data_news);
         const res_data_column = await checkIsBookmark(data.data_column);
-
         var last_update_time = getKoreanUpdateTime(data.date);
-        const res_data = {
+
+        const storage_data = {
           ...data,
           data_news: res_data_news,
           data_column: res_data_column,
           last_update_time: last_update_time,
         };
+        AsyncStorage.setItem(
+          `${DATA_KEY.APPDATA}`,
+          JSON.stringify(storage_data),
+        );
 
+        const include_ad_news = insertRandomAd(res_data_news);
+        const include_ad_column = insertRandomAd(res_data_column);
+        const res_data = {
+          ...data,
+          data_news: include_ad_news,
+          data_column: include_ad_column,
+          last_update_time: last_update_time,
+        };
         setState(res_data);
-        AsyncStorage.setItem(`${DATA_KEY.APPDATA}`, JSON.stringify(res_data));
       }
     } catch (e) {
       console.log(e);
@@ -267,7 +320,9 @@ const AppDataProvider = ({children}) => {
     // STATE 변경시 -> 재평가
     if (state) {
       var news_data = [];
-      news_data = state?.data_news?.slice(0, 3);
+      news_data = state?.data_news
+        ?.filter((it) => it.type !== 'AD')
+        ?.slice(0, 3);
       return news_data;
     } else {
       return [];
@@ -278,8 +333,9 @@ const AppDataProvider = ({children}) => {
     // STATE 변경시 -> 재평가
     if (state) {
       var column_data = [];
-      column_data = state?.data_column?.slice(0, 3);
-      console.log(column_data);
+      column_data = state?.data_column
+        ?.filter((it) => it.type !== 'AD')
+        ?.slice(0, 3);
       return column_data;
     } else {
       return [];
