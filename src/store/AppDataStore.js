@@ -109,7 +109,7 @@ const AppDataProvider = ({children}) => {
     ).fromNow();
   };
 
-  const insertRandomAd = (data) => {
+  const insertRandomAd = (data, scene) => {
     var data_clone = data?.slice();
     var min = Math.ceil(3);
     var max = Math.floor(7);
@@ -130,10 +130,14 @@ const AppDataProvider = ({children}) => {
           ? data_clone[cur_random_idx + 1]
           : {type: 'NONE'};
 
-      if (prev_elm.type === 'AD' || next_elm.type === 'AD') {
+      if (prev_elm?.type === 'AD' || next_elm?.type === 'AD') {
         i -= 1;
       } else {
-        data_clone.splice(cur_random_idx, 0, {site: `AD_${i}`, type: 'AD'});
+        data_clone?.splice(cur_random_idx, 0, {
+          site: `AD_${i}`,
+          type: 'AD',
+          scene: scene,
+        });
       }
     }
     return data_clone;
@@ -166,8 +170,8 @@ const AppDataProvider = ({children}) => {
           JSON.stringify(storage_data),
         );
 
-        const include_ad_news = insertRandomAd(res_data_news);
-        const include_ad_column = insertRandomAd(res_data_column);
+        const include_ad_news = insertRandomAd(res_data_news, 'NEWS');
+        const include_ad_column = insertRandomAd(res_data_column, 'COLUMN');
         const res_data = {
           ...data,
           data_news: include_ad_news,
@@ -198,8 +202,8 @@ const AppDataProvider = ({children}) => {
           JSON.stringify(storage_data),
         );
 
-        const include_ad_news = insertRandomAd(res_data_news);
-        const include_ad_column = insertRandomAd(res_data_column);
+        const include_ad_news = insertRandomAd(res_data_news, 'NEWS');
+        const include_ad_column = insertRandomAd(res_data_column, 'COLUMN');
         const res_data = {
           ...data,
           data_news: include_ad_news,

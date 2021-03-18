@@ -46,11 +46,16 @@ export const style = StyleSheet.create({
   badge: {
     width: 20,
     height: 15,
-    backgroundColor: STYLE_COLOR.PRIMARY,
     borderWidth: 0,
     // position: 'relative',
     marginRight: 5,
     justifyContent: 'center',
+  },
+  news_badge: {
+    backgroundColor: STYLE_COLOR.SECONDARY,
+  },
+  column_badge: {
+    backgroundColor: STYLE_COLOR.THIRD,
   },
   badge__text: {
     fontSize: 10,
@@ -62,8 +67,14 @@ export const style = StyleSheet.create({
     width: 100,
     height: 30,
     borderRadius: 10,
-    backgroundColor: STYLE_COLOR.PRIMARY,
     ...STYLE_COMMON.SHADOW,
+    marginVertical: 10,
+  },
+  news_calltoaction__view: {
+    backgroundColor: STYLE_COLOR.SECONDARY,
+  },
+  column_calltoaction__view: {
+    backgroundColor: STYLE_COLOR.THIRD,
   },
   calltoaction__view__text: {
     fontFamily: 'AppleEB',

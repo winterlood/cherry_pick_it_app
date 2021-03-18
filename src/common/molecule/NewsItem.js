@@ -63,7 +63,7 @@ const NewsBodyView = ({item}) => {
 
 const NewsItem = ({item, toggleModal, type}) => {
   if (item.type === 'AD') {
-    return <NativeAd />;
+    return <NativeAd scene={item.scene} />;
   } else {
     return (
       <TouchableOpacity

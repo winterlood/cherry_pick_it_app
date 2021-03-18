@@ -19,7 +19,7 @@ const text25 = 'ㅁㄴㅇㄹㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇ�
 const text90 =
   'ㅁㄴㅇㄹㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇ';
 
-const NativeAd = () => {
+const NativeAd = ({scene}) => {
   const nativeAdViewRef = useRef();
 
   React.useEffect(() => {
@@ -31,13 +31,16 @@ const NativeAd = () => {
       <View style={style.outter_container}>
         <NativeAdView
           ref={nativeAdViewRef}
-          enableTestMode={true}
-          adUnitID="ca-app-pub-3940256099942544/2247696110"
+          // enableTestMode={true}
+          adUnitID={
+            __DEV__
+              ? 'ca-app-pub-3940256099942544/2247696110'
+              : 'ca-app-pub-8356725717508400/8249445329'
+          }
           adChoicesPlacement={'topRight'}>
           <View style={style.inner_container}>
             <View style={style.thunmnail_container}>
               <ImageView style={style.mediaview} />
-              {/* <NativeMediaView style={style.mediaview} /> */}
             </View>
             <View style={style.body_container}>
               <View
@@ -47,7 +50,6 @@ const NativeAd = () => {
                 }}>
                 <HeadlineView style={style.headline__text} />
               </View>
-
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <IconView
                   style={{
@@ -58,19 +60,28 @@ const NativeAd = () => {
                 />
                 <AdvertiserView style={style.advertiser__text} />
               </View>
-              {/* <Text style={style.headline__text}>{text25}</Text> */}
-              {/* <Text style={style.tagline__text}>{text90}</Text> */}
 
               <TaglineView style={style.tagline__text} />
               <View style={{flexDirection: 'row', justifyContent: 'flex-end'}}>
                 <CallToActionView
-                  style={style.calltoaction__view}
+                  style={[
+                    style.calltoaction__view,
+                    scene === 'NEWS'
+                      ? style.news_calltoaction__view
+                      : style.column_calltoaction__view,
+                  ]}
                   textStyle={style.calltoaction__view__text}
                 />
               </View>
             </View>
           </View>
-          <AdBadge style={style.badge} textStyle={style.badge__text} />
+          <AdBadge
+            style={[
+              style.badge,
+              scene === 'NEWS' ? style.news_badge : style.column_badge,
+            ]}
+            textStyle={style.badge__text}
+          />
         </NativeAdView>
       </View>
     </>

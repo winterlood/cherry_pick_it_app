@@ -25,6 +25,9 @@ import {
   NEWS_DEFAULT_IMAGE,
 } from '~/util/NewsComponentResolver';
 
+// ADMOB
+import WideBannerAd from '~/common/ads/WideBannerAd';
+
 const ItemBookMarkButton = ({modalState}) => {
   const {itemAction} = useContext(AppDataContext);
   const toggleBookmark = () => {
@@ -45,6 +48,10 @@ const ItemBookMarkButton = ({modalState}) => {
 
 const ItemModal = ({modalState, toggleModal}) => {
   const {_, width} = Dimensions.get('window');
+  const openAction = async () => {
+    Linking.openURL(modalState?.targetData?.url);
+  };
+
   return (
     <Modal isVisible={modalState?.isVisible}>
       <TouchableOpacity
@@ -72,6 +79,7 @@ const ItemModal = ({modalState, toggleModal}) => {
               fail={NEWS_DEFAULT_IMAGE(modalState?.targetData?.source)}
             />
           </View>
+
           <View style={styles.modal_header}>
             <View style={styles.modal_header_left}>
               <Text style={styles.modal_header__main}>
@@ -85,9 +93,11 @@ const ItemModal = ({modalState, toggleModal}) => {
               <ItemBookMarkButton modalState={modalState} />
             </View>
           </View>
+          <WideBannerAd />
+
           <View style={styles.modal_footer}>
             <TouchableOpacity
-              onPress={() => Linking.openURL(modalState?.targetData?.url)}
+              onPress={() => openAction()}
               style={[styles.btn_common, styles.btn_positive]}>
               <Text style={[styles.btn_text, styles.btn_text_positive]}>
                 {modalState?.targetData?.type === 'TYPE_NEWS'
