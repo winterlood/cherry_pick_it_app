@@ -10,10 +10,13 @@ import {STYLE_TYPHO} from '~/util/StyleGuide';
 const getTypho = (scene) => {
   switch (scene) {
     case 'HOME': {
-      return {title: '체리픽 IT', sub: '체리픽 아이티의 새로운 뉴스'};
+      return {
+        title: '체리픽 IT',
+        sub: '실시간 뉴스&칼럼 : 트렌드를 추적하는 가장 확실한 방법',
+      };
     }
     case 'BOOKMARK':
-      return {title: '북마크', sub: '북마크된 뉴스 / 칼럼'};
+      return {title: '북마크', sub: '북마크된 뉴스&칼럼'};
     default: {
       return {title: 'Lorem Is Prum', sub: 'SUB SCRIPTION'};
     }

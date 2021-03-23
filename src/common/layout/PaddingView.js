@@ -1,8 +1,8 @@
 import React, {useState, useEffect} from 'react';
 import {StyleSheet, View} from 'react-native';
 
-const PaddingView = ({children}) => {
-  return <View style={styles.container}>{children}</View>;
+const PaddingView = ({children, style}) => {
+  return <View style={[styles.container, style]}>{children}</View>;
 };
 
 const styles = StyleSheet.create({

@@ -28,6 +28,9 @@ import {
 // ADMOB
 import WideBannerAd from '~/common/ads/WideBannerAd';
 
+// ICONS
+import Icon_Feather from 'react-native-vector-icons/Feather';
+
 const ItemBookMarkButton = ({modalState}) => {
   const {itemAction} = useContext(AppDataContext);
   const toggleBookmark = () => {
@@ -85,9 +88,28 @@ const ItemModal = ({modalState, toggleModal}) => {
               <Text style={styles.modal_header__main}>
                 {modalState?.targetData?.headline.replace(/\n/g, '')}
               </Text>
-              <Text style={styles.modal_header__sub}>
-                {NEWS_SOURCE_SPINNER(modalState?.targetData?.source)}
-              </Text>
+              <TouchableOpacity
+                onPress={() => Linking.openURL(modalState?.targetData?.source)}
+                style={{
+                  flexDirection: 'row',
+                  marginVertical: 5,
+                }}>
+                <Text
+                  style={{
+                    flexDirection: 'row',
+                    marginVertical: 5,
+                    borderRadius: 5,
+                    borderWidth: 1,
+                    borderColor: 'rgb(220,220,220)',
+                    paddingHorizontal: 10,
+                    paddingVertical: 2,
+                  }}>
+                  <Text style={styles.modal_header__sub}>
+                    [출처] {NEWS_SOURCE_SPINNER(modalState?.targetData?.source)}
+                  </Text>
+                  <Icon_Feather name="external-link" style={{fontSize: 15}} />
+                </Text>
+              </TouchableOpacity>
             </View>
             <View style={styles.modal_header_right}>
               <ItemBookMarkButton modalState={modalState} />
@@ -157,6 +179,7 @@ const styles = StyleSheet.create({
   },
   modal_header__sub: {
     ...STYLE_TYPHO.MODAL_HEADER_SUB,
+    marginRight: 5,
   },
   bookmark_btn: {
     justifyContent: 'flex-end',

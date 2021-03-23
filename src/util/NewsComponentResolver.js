@@ -5,19 +5,19 @@ export const NEWS_SOURCE_SPINNER = (source) => {
     case 'https://techneedle.com':
       return '테크니들';
     case 'https://www.itworld.co.kr':
-      return 'IT월드';
+      return 'ITWorld Korea';
     case 'https://woowabros.github.io':
-      return '우아한 형제들 기술블로그';
+      return '우아한형제들 기술블로그';
     case 'https://tech.kakao.com/blog/':
       return '카카오 기술블로그';
     case 'http://www.inews24.com/':
-      return 'inews24';
+      return '아이뉴스24';
     case 'https://velog.io/':
-      return 'velog';
+      return 'Velog';
     case 'https://it.donga.com':
-      return 'IT 동아';
+      return 'IT동아';
     default:
-      return '알수없음';
+      return source;
   }
 };
 

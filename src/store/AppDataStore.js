@@ -1,9 +1,11 @@
 import React, {useState, useEffect} from 'react';
+import {Alert} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 // import moment from 'moment';
 import 'moment/locale/ko';
 import {useCallback} from 'react';
+import SplashScreen from 'react-native-splash-screen';
 
 const moment = require('moment');
 moment.locale('ko');
@@ -22,15 +24,15 @@ const AppDataProvider = ({children}) => {
   const [state, setState] = useState();
 
   const getServerData = async () => {
-    const restData = await axios
+    return await axios
       .get(data_uri)
-      .then((response) => response?.data);
-    return restData;
+      .then((response) => response?.data)
+      .catch((error) => 'ERROR');
   };
 
   const getLocalData = async () => {
     var value = await AsyncStorage.getItem(`${DATA_KEY.APPDATA}`);
-    value = value ? JSON.parse(value) : 'NO-DATA';
+    value = value ? JSON.parse(value) : 'NO_DATA';
     return value;
   };
 
@@ -56,7 +58,7 @@ const AppDataProvider = ({children}) => {
 
   const canUpdateData = async () => {
     var local_data = await getLocalData();
-    if (local_data === 'NO-DATA') {
+    if (local_data === 'NO_DATA') {
       return true;
     } else {
       var isNewDataFlag = await isNewData(local_data);
@@ -147,9 +149,19 @@ const AppDataProvider = ({children}) => {
     console.log('=========================================');
     try {
       const canUpdate = await canUpdateData();
+
       if (canUpdate) {
         console.log('✅  UPDATE IS AVAILABLE');
-        const data = await getServerData();
+        var data = await getServerData();
+        if (data === 'ERROR') {
+          console.log('ERROR OCCURED');
+          data = await getLocalData();
+          if (data === 'NO_DATA') {
+            Alert.alert('인터넷 연결상태를 확인해주세요');
+            return;
+          }
+        }
+
         console.log('DATE : ', data.date);
         console.log('TOTAL COUNT : ', data.count_total);
         console.log('NEWS COUNT  : ', data.count_news);
@@ -181,7 +193,7 @@ const AppDataProvider = ({children}) => {
         setState(res_data);
       } else {
         console.log('🚫  UPDATE NOT NEED');
-        const data = await getLocalData();
+        var data = await getLocalData();
         console.log('DATE : ', data.date);
         console.log('TOTAL COUNT : ', data.count_total);
         console.log('NEWS COUNT  : ', data.count_news);
@@ -215,6 +227,8 @@ const AppDataProvider = ({children}) => {
     } catch (e) {
       console.log(e);
       AsyncStorage.removeItem(`${DATA_KEY.APPDATA}`);
+    } finally {
+      SplashScreen.hide();
     }
   };
 

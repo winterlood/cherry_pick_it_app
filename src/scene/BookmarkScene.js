@@ -71,7 +71,7 @@ function ColumnScene() {
 const BookmarkScene = () => {
   return (
     <SafeAreaView style={{flex: 1}}>
-      <PaddingView>
+      <PaddingView style={{marginBottom: 10}}>
         <PageHeader scene={'BOOKMARK'} />
       </PaddingView>
       <Tab.Navigator

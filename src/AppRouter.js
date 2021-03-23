@@ -9,13 +9,10 @@ import BookmarkScene from '~/scene/BookmarkScene';
 // Commons
 import BottomTabBar from '~/common/molecule/BottomTabBar';
 
-import WideBannerAd from '~/common/ads/WideBannerAd';
 const Tab = createBottomTabNavigator();
 const AppRouter = () => {
   return (
     <>
-      {/* <WideBannerAd /> */}
-
       <NavigationContainer>
         <Tab.Navigator tabBar={(props) => <BottomTabBar {...props} />}>
           <Tab.Screen name="Home" component={HomeScene} />

@@ -4,6 +4,7 @@ export const STYLE_COLOR = {
   // COMMON
   PRIMARY: 'tomato',
   SECONDARY: '#47d5ff',
+  SECONDARY_BACK: '#ccf3ff',
   THIRD: '#9ae264',
   DEFAULT: 'rgb(200,200,200)',
   LABEL: 'rgb(150,150,150)',
