@@ -8,28 +8,47 @@ import {
   Linking,
 } from 'react-native';
 import Modal from 'react-native-modal';
+import FastImage from 'react-native-fast-image';
 
 // STORE
 import {AppDataContext} from '~/store/AppDataStore';
 
 // COMMON
-import ImageWithError from '~/common/atom/ImageWithError';
 import ItemBookmarkTag from '~/common/atom/ItemBookmarkTag';
 
 // STYLE GUIDE
 import {STYLE_COLOR, STYLE_TYPHO} from '~/util/StyleGuide';
-
-// UTILS
-import {
-  NEWS_SOURCE_SPINNER,
-  NEWS_DEFAULT_IMAGE,
-} from '~/util/NewsComponentResolver';
 
 // ADMOB
 import WideBannerAd from '~/common/ads/WideBannerAd';
 
 // ICONS
 import Icon_Feather from 'react-native-vector-icons/Feather';
+const {_, width} = Dimensions.get('window');
+
+const ModalImage = ({thumbnail_url, source, type}) => {
+  const {getItemDefaultImage} = useContext(AppDataContext);
+
+  const image_url =
+    typeof thumbnail_url === 'undefined'
+      ? getItemDefaultImage(source, type)
+      : thumbnail_url;
+  return (
+    <FastImage
+      source={{uri: image_url, priority: FastImage.priority.normal}}
+      style={{
+        width: width - 30,
+        height: 150,
+        backgroundColor: 'black',
+        overflow: 'hidden',
+        resizeMode: 'contain',
+      }}
+      onError={() => {
+        console.log('HA');
+      }}
+    />
+  );
+};
 
 const ItemBookMarkButton = ({modalState}) => {
   const {itemAction} = useContext(AppDataContext);
@@ -50,7 +69,6 @@ const ItemBookMarkButton = ({modalState}) => {
 };
 
 const ItemModal = ({modalState, toggleModal}) => {
-  const {_, width} = Dimensions.get('window');
   const openAction = async () => {
     Linking.openURL(modalState?.targetData?.url);
   };
@@ -64,23 +82,7 @@ const ItemModal = ({modalState, toggleModal}) => {
           activeOpacity={1}
           style={styles.modal_container__inner}>
           <View style={styles.modal_top_img}>
-            <ImageWithError
-              style={{
-                width: width - 30,
-                height: 150,
-                backgroundColor: 'black',
-                overflow: 'hidden',
-                resizeMode: 'contain',
-              }}
-              success={
-                modalState?.targetData?.thumbnail_url
-                  ? {
-                      uri: modalState?.targetData?.thumbnail_url,
-                    }
-                  : NEWS_DEFAULT_IMAGE(modalState?.targetData?.source)
-              }
-              fail={NEWS_DEFAULT_IMAGE(modalState?.targetData?.source)}
-            />
+            <ModalImage {...modalState.targetData} />
           </View>
 
           <View style={styles.modal_header}>
@@ -105,7 +107,7 @@ const ItemModal = ({modalState, toggleModal}) => {
                     paddingVertical: 2,
                   }}>
                   <Text style={styles.modal_header__sub}>
-                    [출처] {NEWS_SOURCE_SPINNER(modalState?.targetData?.source)}
+                    [출처] {modalState?.targetData?.source}
                   </Text>
                   <Icon_Feather name="external-link" style={{fontSize: 15}} />
                 </Text>

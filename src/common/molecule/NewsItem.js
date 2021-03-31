@@ -1,15 +1,19 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
+import FastImage from 'react-native-fast-image';
+
+// STORES
+import {AppDataContext} from '~/store/AppDataStore';
 
 // COMMONS
 import ImageBackgroundWithError from '~/common/atom/ImageBackgroundWithError';
 import ItemTag from '~/common/atom/ItemTag';
 
 // UTILS
-import {
-  NEWS_SOURCE_SPINNER,
-  NEWS_DEFAULT_IMAGE,
-} from '~/util/NewsComponentResolver';
+// import {
+//   NEWS_SOURCE_SPINNER,
+//   NEWS_DEFAULT_IMAGE,
+// } from '~/util/NewsComponentResolver';
 import {STYLE_COLOR, STYLE_TYPHO, STYLE_COMMON} from '~/util/StyleGuide';
 
 // ICONS
@@ -17,6 +21,7 @@ import Icon_FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 // AD
 import NativeAd from '~/common/ads/NativeAd';
+import {useEffect} from 'react/cjs/react.development';
 
 const BookmarkFlag = ({isBookmarked}) => {
   return (
@@ -30,19 +35,23 @@ const BookmarkFlag = ({isBookmarked}) => {
   );
 };
 
-const NewsThumbnailView = ({item}) => {
+const NewsThumbnailView = React.memo(({thumbnail_url, source, type}) => {
+  const {getItemDefaultImage} = useContext(AppDataContext);
+
+  const image_url =
+    typeof thumbnail_url === 'undefined'
+      ? getItemDefaultImage(source, type)
+      : thumbnail_url;
   return (
-    <ImageBackgroundWithError
-      success={
-        item.thumbnail_url
-          ? {uri: item.thumbnail_url}
-          : NEWS_DEFAULT_IMAGE(item.source)
-      }
-      fail={NEWS_DEFAULT_IMAGE(item.source)}
-      style={styles.item_thumbnail}
+    <FastImage
+      source={{uri: image_url, priority: FastImage.priority.normal}}
+      style={{width: 120, marginLeft: -5, backgroundColor: 'black'}}
+      onError={() => {
+        console.log('HA');
+      }}
     />
   );
-};
+});
 
 const NewsBodyView = ({item}) => {
   return (
@@ -54,14 +63,15 @@ const NewsBodyView = ({item}) => {
         style={styles.item_body__headline}>
         {item.headline.replace(/\n/g, '')}
       </Text>
-      <Text style={styles.item_body__source}>
-        {NEWS_SOURCE_SPINNER(item.source)}
-      </Text>
+      <Text style={styles.item_body__source}>{item.source}</Text>
     </View>
   );
 };
 
 const NewsItem = ({item, toggleModal, type}) => {
+  // useEffect(() => {
+  //   console.log(item.headline, ' RENDER');
+  // });
   if (item.type === 'AD') {
     return <NativeAd scene={item.scene} />;
   } else {
@@ -69,7 +79,11 @@ const NewsItem = ({item, toggleModal, type}) => {
       <TouchableOpacity
         onPress={() => toggleModal(item)}
         style={styles.container}>
-        <NewsThumbnailView item={item} />
+        <NewsThumbnailView
+          thumbnail_url={item.thumbnail_url}
+          source={item.source}
+          type={item.type}
+        />
 
         <NewsBodyView item={item} />
         <BookmarkFlag isBookmarked={item.bookmark} />
@@ -78,7 +92,7 @@ const NewsItem = ({item, toggleModal, type}) => {
   }
 };
 function arePropsEqual(prevProps, nextProps) {
-  return nextProps.item.bookmark === prevProps.item.bookmark;
+  return nextProps.item === prevProps.item;
 }
 
 const styles = StyleSheet.create({
@@ -138,4 +152,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default React.memo(NewsItem, arePropsEqual);
+export default React.memo(NewsItem);

@@ -2,7 +2,6 @@ import React, {useState, useEffect} from 'react';
 import {Alert} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-// import moment from 'moment';
 import 'moment/locale/ko';
 import {useCallback} from 'react';
 import SplashScreen from 'react-native-splash-screen';
@@ -20,14 +19,27 @@ const DATA_KEY = {
 const data_uri =
   'https://raw.githubusercontent.com/winterlood/cherrypick_it/main/output.json';
 
+const provider_data_uri =
+  'https://raw.githubusercontent.com/winterlood/cherrypick_it/main/content_provider.json';
+
 const AppDataProvider = ({children}) => {
   const [state, setState] = useState();
 
   const getServerData = async () => {
-    return await axios
+    const output_data = await axios
       .get(data_uri)
       .then((response) => response?.data)
       .catch((error) => 'ERROR');
+    const provider_data = await axios
+      .get(provider_data_uri)
+      .then((response) => response?.data)
+      .catch((error) => 'ERROR');
+    return {
+      ...output_data,
+      content_provider_data: {
+        ...provider_data,
+      },
+    };
   };
 
   const getLocalData = async () => {
@@ -70,7 +82,7 @@ const AppDataProvider = ({children}) => {
     }
   };
 
-  const checkIsBookmark = async (data) => {
+  const checkIsBookmark = async (data, cur_type) => {
     if (data) {
       // 1. 구독 리스트 불러오기
       var subsribe_list = [];
@@ -80,10 +92,12 @@ const AppDataProvider = ({children}) => {
 
       if (subsribe_list === 'NO_DATA') return data;
 
-      const res_data = data?.map((it) => {
-        if (
-          subsribe_list?.findIndex((list_it) => list_it.url === it.url) !== -1
-        ) {
+      var res_data = data?.map((it) => {
+        var target_idx = subsribe_list?.findIndex(
+          (list_it) => list_it.url === it.url,
+        );
+        if (target_idx !== -1) {
+          subsribe_list.splice(target_idx, 1);
           return {
             ...it,
             bookmark: true,
@@ -92,6 +106,14 @@ const AppDataProvider = ({children}) => {
           return {...it, bookmark: false};
         }
       });
+
+      var remain_bookmark_list = subsribe_list?.filter(
+        (it) => it.type === cur_type,
+      );
+
+      if (remain_bookmark_list?.length >= 1) {
+        res_data = res_data.concat(remain_bookmark_list);
+      }
       return res_data;
     }
     return [];
@@ -167,8 +189,14 @@ const AppDataProvider = ({children}) => {
         console.log('NEWS COUNT  : ', data.count_news);
         console.log('COLUMNS COUNT  : ', data.count_column);
 
-        const res_data_news = await checkIsBookmark(data.data_news);
-        const res_data_column = await checkIsBookmark(data.data_column);
+        const res_data_news = await checkIsBookmark(
+          data.data_news,
+          'TYPE_NEWS',
+        );
+        const res_data_column = await checkIsBookmark(
+          data.data_column,
+          'TYPE_COLUMN',
+        );
         var last_update_time = getKoreanUpdateTime(data.date);
 
         const storage_data = {
@@ -199,8 +227,14 @@ const AppDataProvider = ({children}) => {
         console.log('NEWS COUNT  : ', data.count_news);
         console.log('COLUMNS COUNT  : ', data.count_column);
 
-        const res_data_news = await checkIsBookmark(data.data_news);
-        const res_data_column = await checkIsBookmark(data.data_column);
+        const res_data_news = await checkIsBookmark(
+          data.data_news,
+          'TYPE_NEWS',
+        );
+        const res_data_column = await checkIsBookmark(
+          data.data_column,
+          'TYPE_COLUMN',
+        );
         var last_update_time = getKoreanUpdateTime(data.date);
 
         const storage_data = {
@@ -241,9 +275,6 @@ const AppDataProvider = ({children}) => {
     async (actionType, target_item) => {
       switch (actionType) {
         case 'BOOKMARK': {
-          console.log(actionType);
-          console.log(target_item.url);
-          console.log(target_item.type);
           // 1. 구독 리스트 불러오기
           var bookmark_list = [];
           await AsyncStorage.getItem(
@@ -259,12 +290,10 @@ const AppDataProvider = ({children}) => {
           );
           if (target_index !== -1) {
             // 2-1. 구독중인 아이템 -> 구독 리스트 제거
-            console.log('REMOVE ACTION');
             bookmark_list.splice(parseInt(target_index), 1);
           } else {
             // 2-2. 구독아닌 아이템 -> 구독 리스트 추가
-            console.log('ADD ACTION');
-            bookmark_list.push(target_item);
+            bookmark_list.push({...target_item, bookmark: true});
           }
           await AsyncStorage.setItem(
             DATA_KEY.BOOKMARK_DATA,
@@ -274,10 +303,10 @@ const AppDataProvider = ({children}) => {
           // 3. STATE 반영 (TOGGLE)
           var origin_state_list =
             target_item.type === 'TYPE_NEWS'
-              ? state.data_news
-              : state.data_column;
+              ? state.data_news.slice()
+              : state.data_column.slice();
 
-          var new_state_list = origin_state_list.slice().map((it) => {
+          var new_state_list = origin_state_list?.map((it) => {
             if (it.url === target_item.url) {
               return {...it, bookmark: !it.bookmark};
             } else {
@@ -360,19 +389,20 @@ const AppDataProvider = ({children}) => {
     }
   }, [state]);
 
-  const getBookmarkedNewsData = useCallback(() => {
+  const getBookmarkedNewsData = () => {
     // BOOKMARK SCENE USE
     // STATE 변경시 -> 재평가
+
     if (state) {
       var news_data = [];
-      news_data = state?.data_news?.filter((it) => it.bookmark)?.slice();
+      news_data = state?.data_news?.filter((it) => it.bookmark);
       return news_data;
     } else {
       return [];
     }
-  }, [state]);
+  };
 
-  const getBookmarkedColumnData = useCallback(() => {
+  const getBookmarkedColumnData = () => {
     // BOOKMARK SCENE USE
     // STATE 변경시 -> 재평가
     if (state) {
@@ -382,7 +412,54 @@ const AppDataProvider = ({children}) => {
     } else {
       return [];
     }
-  }, [state]);
+  };
+
+  const getContentProviderData = (type) => {
+    // CONTENT PROVIDER MODAL DATA PROVIDEr
+    if (state) {
+      return state.content_provider_data;
+    } else {
+      return [];
+    }
+  };
+
+  const getItemDefaultImage = (source, type) => {
+    if (state) {
+      if (type === 'TYPE_NEWS') {
+        var target_item = state.content_provider_data.news.filter(
+          (it) => it.source === source,
+        )[0];
+
+        return target_item?.source_image;
+      } else {
+        var target_item = state.content_provider_data.column.filter(
+          (it) => it.source === source,
+        )[0];
+
+        return target_item?.source_image;
+      }
+    } else {
+      return '';
+    }
+  };
+
+  const getItemProviderData = (source, type) => {
+    if (state) {
+      if (type === 'TYPE_NEWS') {
+        var target_item = state.content_provider_data.news.filter(
+          (it) => it.source === source,
+        )[0];
+        return target_item;
+      } else {
+        var target_item = state.content_provider_data.column.filter(
+          (it) => it.source === source,
+        )[0];
+        return target_item;
+      }
+    } else {
+      return '';
+    }
+  };
 
   const store = {
     state,
@@ -391,6 +468,9 @@ const AppDataProvider = ({children}) => {
     getHomeColumnData,
     getBookmarkedNewsData,
     getBookmarkedColumnData,
+    getContentProviderData,
+    getItemDefaultImage,
+    getItemProviderData,
     itemAction,
   };
   return (

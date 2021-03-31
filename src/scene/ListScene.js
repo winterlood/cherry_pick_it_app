@@ -25,8 +25,54 @@ import {STYLE_COLOR, STYLE_TYPHO, STYLE_COMMON} from '~/util/StyleGuide';
 
 const Tab = createMaterialTopTabNavigator();
 
+const TestITem = React.memo(({item}) => {
+  useEffect(() => {
+    console.log(item.headline);
+  });
+  return (
+    <View style={{height: 100}}>
+      <Text>{item.headline}</Text>
+    </View>
+  );
+});
+
+const ListComponent = React.memo(({type, memoizedToggleModal}) => {
+  const {state, getItemProviderData} = useContext(AppDataContext);
+
+  const MemoizedRenderItem = useCallback(
+    ({item}) => (
+      <TestITem
+        target={item.source}
+        item={{...item}}
+        toggleModal={memoizedToggleModal}
+      />
+    ),
+    [],
+  );
+  const MemoizedKeyExtractor = useCallback((item, idx) => `${type}_${idx}`, []);
+
+  return (
+    <FlatList
+      // initialNumToRender={5}
+      // windowSize={10}
+      data={
+        state
+          ? type === 'NEWS'
+            ? state.data_news
+            : state.data_column
+          : undefined
+      }
+      ListHeaderComponent={<InfoView type={type} />}
+      renderItem={({item}) => (
+        <TestITem item={{...item}} toggleModal={memoizedToggleModal} />
+      )}
+      keyExtractor={MemoizedKeyExtractor}
+      ListFooterComponent={() => <View style={{height: 60}}></View>}
+    />
+  );
+});
+
 const ItemList = ({type}) => {
-  const {state} = useContext(AppDataContext);
   const [modalState, setModalState] = useState({
     isVisible: false,
     targetData: undefined,
@@ -49,22 +95,7 @@ const ItemList = ({type}) => {
   return (
     <>
       <ItemModal modalState={modalState} toggleModal={toggleModal} />
-
-      <FlatList
-        data={
-          state
-            ? type === 'NEWS'
-              ? state.data_news
-              : state.data_column
-            : undefined
-        }
-        ListHeaderComponent={<InfoView type={type} />}
-        renderItem={({item}) => (
-          <NewsItem item={item} toggleModal={memoizedToggleModal} />
-        )}
-        keyExtractor={(item, idx) => `${type}_${idx}`}
-        ListFooterComponent={() => <View style={{height: 60}}></View>}
-      />
+      <ListComponent type={type} memoizedToggleModal={memoizedToggleModal} />
     </>
   );
 };
@@ -77,11 +108,7 @@ const NewsScene = () => {
   );
 };
 const ColumnScene = () => {
-  return (
-    <>
-      <ItemList type={'COLUMN'} />
-    </>
-  );
+  return <>{/* <ItemList type={'COLUMN'} /> */}</>;
 };
 
 const InfoView = ({type}) => {

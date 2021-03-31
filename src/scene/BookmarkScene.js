@@ -1,4 +1,4 @@
-import React, {useState, useContext, useCallback} from 'react';
+import React, {useState, useEffect, useContext, useCallback} from 'react';
 import {StyleSheet, FlatList, SafeAreaView, View} from 'react-native';
 
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
@@ -48,8 +48,8 @@ const ItemList = ({type}) => {
         data={
           state
             ? type === 'NEWS'
-              ? getBookmarkedNewsData()
-              : getBookmarkedColumnData()
+              ? state?.data_news?.slice()?.filter((it) => it.bookmark)
+              : state?.data_column?.slice()?.filter((it) => it.bookmark)
             : undefined
         }
         renderItem={({item}) => (

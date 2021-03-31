@@ -1,19 +1,19 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import Modal from 'react-native-modal';
 import {StyleSheet, TouchableOpacity, View, Text, Linking} from 'react-native';
 import axios from 'axios';
+
+// STORES
+import {AppDataContext} from '~/store/AppDataStore';
 
 // Icons
 import Icon_Feather from 'react-native-vector-icons/Feather';
 import {STYLE_COLOR} from '../../util/StyleGuide';
 
-const data_uri =
-  'https://raw.githubusercontent.com/winterlood/cherrypick_it/main/content_provider.json';
-
 const ProviderItem = ({item}) => {
   return (
     <TouchableOpacity
-      onPress={() => Linking.openURL(item.homepage)}
+      onPress={() => Linking.openURL(item.source)}
       style={{
         padding: 10,
         borderWidth: 1,
@@ -57,7 +57,7 @@ const ProviderItem = ({item}) => {
             fontSize: 18,
             marginRight: 5,
           }}>
-          {item.homepage}
+          {item.source}
         </Text>
         <Icon_Feather name="external-link" style={{fontSize: 15}} />
       </View>
@@ -66,20 +66,8 @@ const ProviderItem = ({item}) => {
 };
 
 const InfoModal = ({modalState, toggleModal}) => {
-  const [data, setData] = useState([]);
-  const getServerData = async () => {
-    return await axios
-      .get(data_uri)
-      .then((response) => response?.data)
-      .catch((error) => 'ERROR');
-  };
-  const initModalData = async () => {
-    const rest_data = await getServerData();
-    setData(rest_data);
-  };
-  useEffect(() => {
-    initModalData();
-  }, []);
+  const {getContentProviderData} = useContext(AppDataContext);
+
   const getKorType = () => {
     return modalState.type === 'NEWS' ? '뉴스' : '칼럼';
   };
@@ -100,10 +88,10 @@ const InfoModal = ({modalState, toggleModal}) => {
           </Text>
         </View>
         {modalState.type === 'NEWS'
-          ? data?.news?.map((it, idx) => (
+          ? getContentProviderData()?.news?.map((it, idx) => (
               <ProviderItem key={`NEWS_${idx}`} item={it} />
             ))
-          : data?.column?.map((it, idx) => (
+          : getContentProviderData()?.column?.map((it, idx) => (
               <ProviderItem key={`COLUMN_${idx}`} item={it} />
             ))}
         <TouchableOpacity
